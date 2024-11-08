@@ -58,7 +58,7 @@ function saveDataToFile(issuerCode, data) {
 }
 
 // Example usage
-const issuerCodes = ['kmb', 'alk']; // List of issuer codes you want to fetch data for
+const issuerCodes = ['kmb', 'alk','adin','alkb']; // List of issuer codes you want to fetch data for
 issuerCodes.forEach(async (issuerCode) => {
     const data = await getIssuerData(issuerCode);
     if (data.length > 0) {
