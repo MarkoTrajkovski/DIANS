@@ -46,7 +46,7 @@ async function getIssuerData(issuerCode) {
     }
 }
 
-const issuerCodes = ['kmb', 'alk'];
+const issuerCodes = ['kmb', 'alk','adin','alkb'];
 issuerCodes.forEach(async (issuerCode) => {
     const data = await getIssuerData(issuerCode);
     console.log(`Data for ${issuerCode}:`, data);
