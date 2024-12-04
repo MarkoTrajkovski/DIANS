@@ -1,0 +1,23 @@
+
+User Registration Flow
+Register Controller → Register Service → User Repository
+
+When a user submits a registration request, the Register Controller processes the request from the MVC layer and forwards it to the Register Service.
+The Register Service validates the provided information and ensures data integrity.
+Once validated, the user data is saved in the database via the User Repository, which handles all database interactions.
+User Login Flow
+Login Controller → Login Service → User Repository
+
+When a login request is received, the Login Controller forwards it to the Login Service.
+The Login Service performs authentication and authorization, relying on Spring Security to verify user credentials.
+The User Repository retrieves user data from the database to complete the login process.
+Company Search & Stock Prediction Flow
+Business Controller → Business Service → LSTM Service → Company Repository / Transaction History Repository
+
+The Business Controller receives requests related to listed companies and forwards them to the Business Service.
+The Business Service contains the core business logic, managing company selection and retrieving historical data through the Company Repository and Transaction History Repository.
+Once the historical data is retrieved, a request is sent to the LSTM Service, which forecasts the company's stock price for the next month.
+Technologies Used
+Frontend: Bootstrap, Thymeleaf
+Backend: Spring Boot, Python
+Database: PostgreSQL
