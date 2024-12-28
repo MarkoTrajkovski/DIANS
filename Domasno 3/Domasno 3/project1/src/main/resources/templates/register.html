@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #006d77, #83c5be);
+            color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background-color: #073b4c;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        .form-label {
+            color: #edf6f9;
+        }
+
+        .form-control {
+            border: 1px solid #edf6f9;
+            background-color: transparent;
+            color: #edf6f9;
+        }
+
+        .form-control:focus {
+            border-color: #83c5be;
+            box-shadow: none;
+        }
+
+        .btn-custom {
+            background-color: #ef476f;
+            color: #f8f9fa;
+        }
+
+        .btn-custom:hover {
+            background-color: #d43d5c;
+        }
+
+        .input-group-text {
+            background-color: #118ab2;
+            border: none;
+            color: #f8f9fa;
+        }
+
+        .text-link {
+            color: #06d6a0;
+        }
+
+        .text-link:hover {
+            color: #04a675;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <h2 class="text-center mb-4">Create an Account</h2>
+
+                <!-- Error message -->
+                <div th:if="${text}" class="alert alert-danger" role="alert">
+                    <span th:text="${text}"></span>
+                </div>
+
+                <form method="post" action="/register">
+                    <!-- Username Field -->
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                            <input type="text" id="username" class="form-control" name="username" required placeholder="Enter your username">
+                        </div>
+                    </div>
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" id="password" class="form-control" name="password" required placeholder="Enter your password">
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-custom w-100">Register</button>
+                    </div>
+                </form>
+                <p class="text-center mt-4">Already have an account? <a href="/login" class="text-link">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar Redesign</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg" th:fragment="navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Stock</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" aria-current="page" href="/">Home</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <a th:if="${not #authorization.expression('isAuthenticated()')}" href="/login" class="me-3">
+                    <i class="fas fa-sign-in-alt"></i>
+                </a>
+                <a th:if="${not #authorization.expression('isAuthenticated()')}" href="/register" class="me-3">
+                    <i class="fas fa-user-plus"></i>
+                </a>
+                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .navbar {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            border-bottom: 2px solid #efefef;
+        }
+        .navbar a.navbar-brand {
+            color: #FFFFFF;
+            font-size: 1.75rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .navbar a.nav-link {
+            color: #f8f9fa;
+            font-size: 1.1rem;
+            margin-right: 15px;
+        }
+        .navbar a.nav-link:hover {
+            color: #ffd1a9;
+        }
+        .navbar-toggler-icon {
+            background-color: #ffffff;
+        }
+        .navbar a i {
+            font-size: 1.25rem;
+            transition: color 0.3s;
+        }
+        .navbar a i:hover {
+            color: #ffd1a9;
+        }
+    </style>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

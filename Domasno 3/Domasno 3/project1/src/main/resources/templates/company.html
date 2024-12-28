@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Price Trends</title>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .data-table {
+            margin: 20px auto;
+            width: 100%;
+            text-align: center;
+        }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        .prediction-message {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .prediction-message.success {
+            color: #28a745; /* Green for success */
+        }
+        .prediction-message.error {
+            color: #dc3545; /* Red for error */
+        }
+        .predict-next-month-btn {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div th:insert="/layout/layout :: navbar"></div>
+<br/>
+<div class="container py-5">
+    <!-- Page Title -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1 class="text-center">Company Price Trends</h1>
+        </div>
+    </div>
+
+    <!-- Company Data -->
+    <div th:if="${companyData != null && !companyData.isEmpty()}">
+        <div class="row" th:each="data : ${companyData}">
+            <div class="col-12 mb-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" th:text="${data.companyCode} + ' - Overview'">Company Name</h4>
+                        <p class="text-center text-muted">
+                            Last Updated: <span th:text="${#temporals.format(data.lastUpdated, 'dd-MM-yyyy')}">Unknown Date</span>
+                        </p>
+
+                        <!-- Data Table -->
+                        <table class="table table-bordered data-table">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="point, iterStat : ${data.dates}">
+                                <td th:text="${point}">2024-12-01</td>
+                                <td th:text="${data.prices[iterStat.index]}">100.00</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Refactored Buttons Section -->
+                        <div class="buttons-container d-flex flex-column align-items-center mt-4">
+                            <button class="btn btn-success analyze-trends-btn w-75" th:attr="data-company-id=${data.id}">
+                                Analyze Market Trends
+                            </button>
+                            <button class="btn btn-warning sentiment-analysis-btn w-75" th:attr="data-company-id=${data.id}">
+                                Perform Sentiment Check
+                            </button>
+                            <button class="btn btn-danger future-prediction-btn w-75" th:attr="data-company-id=${data.id}">
+                                Forecast Next Month
+                            </button>
+
+                            <!-- Messages -->
+                            <div class="mt-3 text-center">
+                                <p class="prediction-message" th:attr="id='analysis-' + ${data.id}">
+                                    <!-- Market analysis result will go here -->
+                                </p>
+                                <p class="prediction-message" th:attr="id='sentiment-' + ${data.id}">
+                                    <!-- Sentiment check result will go here -->
+                                </p>
+                                <p class="prediction-message" th:attr="id='forecast-' + ${data.id}">
+                                    <!-- Future prediction result will go here -->
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Data Available -->
+    <div th:if="${companyData == null || companyData.isEmpty()}">
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning text-center" role="alert">
+                    No company data available at the moment.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        const companyData = /*[[${companyData}]]*/ [];
+        if (!companyData || companyData.length === 0) {
+            console.warn("No company data available for predictions.");
+            return;
+        }
+
+        // Handle Button Clicks for Predictions
+        document.querySelectorAll(".predict-btn, .nlp-btn, .predict-next-month-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const companyId = button.getAttribute("data-company-id");
+                const endpoint = button.classList.contains("predict-btn")
+                    ? "/api/predict"
+                    : button.classList.contains("nlp-btn")
+                        ? "/api/analyze"
+                        : "/api/predict-next-month-price";
+
+                const resultElement = document.getElementById(
+                    button.classList.contains("predict-btn")
+                        ? "prediction-" + companyId
+                        : button.classList.contains("nlp-btn")
+                            ? "nlp-" + companyId
+                            : "next-month-" + companyId
+                );
+
+                fetch(endpoint + (endpoint.includes("analyze") ? `?companyId=${companyId}` : ""), {
+                    method: endpoint.includes("analyze") ? "GET" : "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: endpoint.includes("analyze") ? null : new URLSearchParams({ companyId }),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Failed to fetch data");
+                        }
+                        return endpoint.includes("analyze") ? response.json() : response.text();
+                    })
+                    .then((response) => {
+                        const message = endpoint.includes("analyze")
+                            ? `Sentiment: ${response.sentimentScore}, Recommendation: ${response.recommendation}`
+                            : `Prediction: ${response}`;
+
+                        resultElement.textContent = message;
+                        resultElement.classList.add("success");
+                        resultElement.classList.remove("error");
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        resultElement.textContent = "Unable to fetch data.";
+                        resultElement.classList.add("error");
+                        resultElement.classList.remove("success");
+                    });
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
